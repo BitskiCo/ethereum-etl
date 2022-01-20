@@ -23,8 +23,10 @@
 from ethereumetl.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl.jobs.base_job import BaseJob
 from ethereumetl.mappers.token_transfer_mapper import EthTokenTransferMapper
+from ethereumetl.mappers.token_transfer_v2_mapper import EthTokenTransferV2Mapper
 from ethereumetl.mappers.receipt_log_mapper import EthReceiptLogMapper
-from ethereumetl.service.token_transfer_extractor import EthTokenTransferExtractor, TRANSFER_EVENT_TOPIC
+from ethereumetl.service.token_transfer_extractor import EthTokenTransferExtractor
+from ethereumetl.service.token_transfer_v2_extractor import EthTokenTransferV2Extractor, TRANSFER_EVENT_TOPICS
 from ethereumetl.utils import validate_range
 
 
@@ -35,7 +37,8 @@ class ExportTokenTransfersJob(BaseJob):
             end_block,
             batch_size,
             web3,
-            item_exporter,
+            transfer_token_exporter,
+            transfer_token_v2_exporter,
             max_workers,
             tokens=None):
         validate_range(start_block, end_block)
@@ -44,16 +47,23 @@ class ExportTokenTransfersJob(BaseJob):
 
         self.web3 = web3
         self.tokens = tokens
-        self.item_exporter = item_exporter
+
+        self.transfer_token_exporter = transfer_token_exporter
+        self.transfer_token_v2_exporter = transfer_token_v2_exporter
 
         self.batch_work_executor = BatchWorkExecutor(batch_size, max_workers)
 
         self.receipt_log_mapper = EthReceiptLogMapper()
+        
         self.token_transfer_mapper = EthTokenTransferMapper()
+        self.token_transfer_v2_mapper = EthTokenTransferV2Mapper()
+
         self.token_transfer_extractor = EthTokenTransferExtractor()
+        self.token_transfer_v2_extractor = EthTokenTransferV2Extractor()
 
     def _start(self):
-        self.item_exporter.open()
+        self.transfer_token_exporter.open()
+        self.transfer_token_v2_exporter.open()
 
     def _export(self):
         self.batch_work_executor.execute(
@@ -68,7 +78,7 @@ class ExportTokenTransfersJob(BaseJob):
         filter_params = {
             'fromBlock': block_number_batch[0],
             'toBlock': block_number_batch[-1],
-            'topics': [TRANSFER_EVENT_TOPIC]
+            'topics': TRANSFER_EVENT_TOPICS
         }
 
         if self.tokens is not None and len(self.tokens) > 0:
@@ -78,12 +88,18 @@ class ExportTokenTransfersJob(BaseJob):
         events = event_filter.get_all_entries()
         for event in events:
             log = self.receipt_log_mapper.web3_dict_to_receipt_log(event)
+
             token_transfer = self.token_transfer_extractor.extract_transfer_from_log(log)
             if token_transfer is not None:
-                self.item_exporter.export_item(self.token_transfer_mapper.token_transfer_to_dict(token_transfer))
+                self.token_transfer_extractor.export_item(self.token_transfer_mapper.token_transfer_to_dict(token_transfer))
+            
+            token_transfer_v2 = self.token_transfer_v2_extractor.extract_transfer_from_log(log)
+            if token_transfer_v2 is not None:
+                self.transfer_token_v2_exporter.export_item(self.token_transfer_v2_mapper.token_transfer_to_dict(token_transfer_v2))
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
     def _end(self):
         self.batch_work_executor.shutdown()
-        self.item_exporter.close()
+        self.transfer_token_exporter.close()
+        self.transfer_token_v2_exporter.close()

@@ -38,6 +38,7 @@ from ethereumetl.jobs.exporters.blocks_and_transactions_item_exporter import blo
 from ethereumetl.jobs.exporters.contracts_item_exporter import contracts_item_exporter
 from ethereumetl.jobs.exporters.receipts_and_logs_item_exporter import receipts_and_logs_item_exporter
 from ethereumetl.jobs.exporters.token_transfers_item_exporter import token_transfers_item_exporter
+from ethereumetl.jobs.exporters.token_transfers_v2_item_exporter import token_transfers_v2_item_exporter
 from ethereumetl.jobs.exporters.tokens_item_exporter import tokens_item_exporter
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
@@ -137,9 +138,23 @@ def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_s
                 token_transfers_output_dir=token_transfers_output_dir,
                 file_name_suffix=file_name_suffix,
             )
-            logger.info('Exporting ERC20 transfers from blocks {block_range} to {token_transfers_file}'.format(
+
+
+            token_transfers_v2_output_dir = '{output_dir}/token_transfers_v2{partition_dir}'.format(
+                output_dir=output_dir,
+                partition_dir=partition_dir,
+            )
+            os.makedirs(os.path.dirname(token_transfers_v2_output_dir), exist_ok=True)
+
+            token_transfers_v2_file = '{token_transfers_v2_output_dir}/token_transfers_v2_{file_name_suffix}.csv'.format(
+                token_transfers_output_dir=token_transfers_v2_output_dir,
+                file_name_suffix=file_name_suffix,
+            )
+
+            logger.info('Exporting ERC20/ERC721/ERC1155 transfers from blocks {block_range} to {token_transfers_file} & {token_transfers_v2_file}'.format(
                 block_range=block_range,
                 token_transfers_file=token_transfers_file,
+                token_transfers_v2_file=token_transfers_v2_file
             ))
 
             job = ExportTokenTransfersJob(
@@ -147,7 +162,8 @@ def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_s
                 end_block=batch_end_block,
                 batch_size=batch_size,
                 web3=ThreadLocalProxy(lambda: build_web3(get_provider_from_uri(provider_uri))),
-                item_exporter=token_transfers_item_exporter(token_transfers_file),
+                transfer_token_exporter=token_transfers_item_exporter(token_transfers_file),
+                transfer_token_v2_exporter=token_transfers_v2_item_exporter(token_transfers_v2_file),
                 max_workers=max_workers)
             job.run()
 

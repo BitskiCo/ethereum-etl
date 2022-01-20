@@ -27,6 +27,7 @@ from ethereumetl.web3_utils import build_web3
 
 from ethereumetl.jobs.export_token_transfers_job import ExportTokenTransfersJob
 from ethereumetl.jobs.exporters.token_transfers_item_exporter import token_transfers_item_exporter
+from ethereumetl.jobs.exporters.token_transfers_v2_item_exporter import token_transfers_v2_item_exporter
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
@@ -50,7 +51,8 @@ def export_token_transfers(start_block, end_block, batch_size, output, max_worke
         end_block=end_block,
         batch_size=batch_size,
         web3=ThreadLocalProxy(lambda: build_web3(get_provider_from_uri(provider_uri))),
-        item_exporter=token_transfers_item_exporter(output),
+        token_transfers_item_exporter=token_transfers_item_exporter(output),
+        token_transfers_v2_item_exporter=token_transfers_v2_item_exporter(output),
         max_workers=max_workers,
         tokens=tokens)
     job.run()
