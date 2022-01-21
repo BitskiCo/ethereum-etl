@@ -84,7 +84,7 @@ class EthStreamerAdapter:
             if EntityType.LOG in self.entity_types else []
         enriched_token_transfers = enrich_token_transfers(blocks, token_transfers) \
             if EntityType.TOKEN_TRANSFER in self.entity_types else []
-        enriched_token_transfers_v2 = enriched_token_transfers_v2(blocks, token_transfers) \
+        enriched_token_transfers_v2 = enrich_token_transfers_v2(blocks, token_transfers) \
             if EntityType.TOKEN_TRANSFER_V2 in self.entity_types else []
         enriched_traces = enrich_traces(blocks, traces) \
             if EntityType.TRACE in self.entity_types else []
