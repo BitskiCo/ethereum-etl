@@ -93,9 +93,10 @@ class ExportTokenTransfersJob(BaseJob):
             if token_transfer is not None:
                 self.token_transfer_extractor.export_item(self.token_transfer_mapper.token_transfer_to_dict(token_transfer))
             
-            token_transfer_v2 = self.token_transfer_v2_extractor.extract_transfer_from_log(log)
-            if token_transfer_v2 is not None:
-                self.transfer_token_v2_exporter.export_item(self.token_transfer_v2_mapper.token_transfer_to_dict(token_transfer_v2))
+            token_transfers_list_v2 = self.token_transfer_v2_extractor.extract_transfer_from_log(log)
+            if token_transfers_list_v2 is not None:
+                for token_transfer_v2 in token_transfers_list_v2:
+                    self.transfer_token_v2_exporter.export_item(self.token_transfer_v2_mapper.token_transfer_to_dict(token_transfer_v2))
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 

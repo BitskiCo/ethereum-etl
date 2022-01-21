@@ -4,6 +4,7 @@ class EntityType:
     RECEIPT = 'receipt'
     LOG = 'log'
     TOKEN_TRANSFER = 'token_transfer'
+    TOKEN_TRANSFER = 'token_transfer_v2'
     TRACE = 'trace'
     CONTRACT = 'contract'
     TOKEN = 'token'

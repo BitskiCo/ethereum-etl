@@ -43,7 +43,7 @@ class EthTokenTransferV2Extractor(object):
             else:
                 return [build_token_transfer(receipt_log, word_to_address(topics_with_data[1]), word_to_address(topics_with_data[2]), hex_to_dec(topics_with_data[3]), 1, "ERC721")]
            
-        elif topics[1] == ERC1155_TRANSFER_SINGLE_TOPIC:
+        elif topics[0] == ERC1155_TRANSFER_SINGLE_TOPIC:
             if len(topics_with_data) != 6:
                 logger.warning("The number of topics and data parts is not equal to 6 in log {} of transaction {}"
                                .format(receipt_log.log_index, receipt_log.transaction_hash))
@@ -51,7 +51,7 @@ class EthTokenTransferV2Extractor(object):
 
             return [build_token_transfer(receipt_log, word_to_address(topics_with_data[2]), word_to_address(topics_with_data[3]), hex_to_dec(topics_with_data[4]), hex_to_dec(topics_with_data[5]), "ERC1155")]
         
-        elif topics[1] == ERC1155_TRANSFER_BATCH_TOPIC:
+        elif topics[0] == ERC1155_TRANSFER_BATCH_TOPIC:
             #todo cleanup
             if len(topics_with_data) <= 10:
                 logger.warning("The number of topics and data parts is not equal to or greater than 10 in log {} of transaction {}"
