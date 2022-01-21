@@ -58,14 +58,14 @@ class EthTokenTransferV2Extractor(object):
                 return None
 
             #todo: write it properly
-            size = topics_with_data[6]
+            size = hex_to_dec(topics_with_data[6])
             token_ids = topics_with_data[7: 7 + size]
             amounts = topics_with_data[1 + 7 + size:]
 
             token_transfers = []
             for token_id, amount in zip(token_ids, amounts):
-                token_transfers.append(build_token_transfer(receipt_log, word_to_address(topics_with_data[2]), word_to_address(topics_with_data[3]), token_id, amount, "ERC1155"))
-                return token_transfers
+                token_transfers.append(build_token_transfer(receipt_log, word_to_address(topics_with_data[2]), word_to_address(topics_with_data[3]), hex_to_dec(token_id), hex_to_dec(amount), "ERC1155"))
+            return token_transfers
         else:
             return None
 
