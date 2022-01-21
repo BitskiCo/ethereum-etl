@@ -56,6 +56,7 @@ def test_stream(tmpdir, start_block, end_block, batch_size, resource_group, enti
     transactions_output_file = str(tmpdir.join('actual_transactions.json'))
     logs_output_file = str(tmpdir.join('actual_logs.json'))
     token_transfers_output_file = str(tmpdir.join('actual_token_transfers.json'))
+    token_transfers_v2_output_file = str(tmpdir.join('actual_token_transfers_v2.json')) 
     traces_output_file = str(tmpdir.join('actual_traces.json'))
     contracts_output_file = str(tmpdir.join('actual_contracts.json'))
     tokens_output_file = str(tmpdir.join('actual_tokens.json'))
@@ -73,6 +74,7 @@ def test_stream(tmpdir, start_block, end_block, batch_size, resource_group, enti
                 'transaction': transactions_output_file,
                 'log': logs_output_file,
                 'token_transfer': token_transfers_output_file,
+                'token_transfer_v2': token_transfers_v2_output_file,
                 'trace': traces_output_file,
                 'contract': contracts_output_file,
                 'token': tokens_output_file,
@@ -114,6 +116,14 @@ def test_stream(tmpdir, start_block, end_block, batch_size, resource_group, enti
         print(read_file(token_transfers_output_file))
         compare_lines_ignore_order(
             read_resource(resource_group, 'expected_token_transfers.json'), read_file(token_transfers_output_file)
+        )
+
+    
+    if 'token_transfer_v2' in entity_types:
+        print('=====================')
+        print(read_file(token_transfers_v2_output_file))
+        compare_lines_ignore_order(
+            read_resource(resource_group, 'expected_token_transfers_v2.json'), read_file(token_transfers_v2_output_file)
         )
 
     if 'trace' in entity_types:

@@ -51,8 +51,8 @@ def export_token_transfers(start_block, end_block, batch_size, output, max_worke
         end_block=end_block,
         batch_size=batch_size,
         web3=ThreadLocalProxy(lambda: build_web3(get_provider_from_uri(provider_uri))),
-        token_transfers_item_exporter=token_transfers_item_exporter(output),
-        token_transfers_v2_item_exporter=token_transfers_v2_item_exporter(output),
+        token_transfers_exporter=token_transfers_item_exporter(output),
+        token_transfers_v2_exporter=token_transfers_v2_item_exporter(output),
         max_workers=max_workers,
         tokens=tokens)
     job.run()

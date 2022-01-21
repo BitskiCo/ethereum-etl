@@ -84,7 +84,7 @@ class EthStreamerAdapter:
             if EntityType.LOG in self.entity_types else []
         enriched_token_transfers = enrich_token_transfers(blocks, token_transfers) \
             if EntityType.TOKEN_TRANSFER in self.entity_types else []
-        enriched_token_transfers_v2 = enrich_token_transfers_v2(blocks, token_transfers) \
+        enriched_token_transfers_v2 = enrich_token_transfers_v2(blocks, token_transfers_v2) \
             if EntityType.TOKEN_TRANSFER_V2 in self.entity_types else []
         enriched_traces = enrich_traces(blocks, traces) \
             if EntityType.TRACE in self.entity_types else []
@@ -211,13 +211,16 @@ class EthStreamerAdapter:
             return EntityType.TRANSACTION in self.entity_types or self._should_export(EntityType.LOG)
 
         if entity_type == EntityType.RECEIPT:
-            return EntityType.TRANSACTION in self.entity_types or self._should_export(EntityType.TOKEN_TRANSFER)
+            return EntityType.TRANSACTION in self.entity_types or self._should_export(EntityType.TOKEN_TRANSFER) or self._should_export(EntityType.TOKEN_TRANSFER_V2)
 
         if entity_type == EntityType.LOG:
-            return EntityType.LOG in self.entity_types or self._should_export(EntityType.TOKEN_TRANSFER)
+            return EntityType.LOG in self.entity_types or self._should_export(EntityType.TOKEN_TRANSFER) or self._should_export(EntityType.TOKEN_TRANSFER_V2)
 
         if entity_type == EntityType.TOKEN_TRANSFER:
             return EntityType.TOKEN_TRANSFER in self.entity_types
+
+        if entity_type == EntityType.TOKEN_TRANSFER_V2:
+            return EntityType.TOKEN_TRANSFER_V2 in self.entity_types
 
         if entity_type == EntityType.TRACE:
             return EntityType.TRACE in self.entity_types or self._should_export(EntityType.CONTRACT)

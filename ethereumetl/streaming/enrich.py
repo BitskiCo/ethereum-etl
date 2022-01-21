@@ -145,7 +145,7 @@ def enrich_token_transfers_v2(blocks, token_transfers_v2):
         token_transfers_v2, blocks, ('block_number', 'number'),
         [
             'type',
-            'token_address',
+            'contract_address',
             'from_address',
             'to_address',
             'amount',

@@ -37,8 +37,8 @@ class ExportTokenTransfersJob(BaseJob):
             end_block,
             batch_size,
             web3,
-            transfer_token_exporter,
-            transfer_token_v2_exporter,
+            token_transfers_exporter,
+            token_transfers_v2_exporter,
             max_workers,
             tokens=None):
         validate_range(start_block, end_block)
@@ -48,8 +48,8 @@ class ExportTokenTransfersJob(BaseJob):
         self.web3 = web3
         self.tokens = tokens
 
-        self.transfer_token_exporter = transfer_token_exporter
-        self.transfer_token_v2_exporter = transfer_token_v2_exporter
+        self.token_transfers_exporter = token_transfers_exporter
+        self.token_transfers_v2_exporter = token_transfers_v2_exporter
 
         self.batch_work_executor = BatchWorkExecutor(batch_size, max_workers)
 
@@ -62,8 +62,8 @@ class ExportTokenTransfersJob(BaseJob):
         self.token_transfer_v2_extractor = EthTokenTransferV2Extractor()
 
     def _start(self):
-        self.transfer_token_exporter.open()
-        self.transfer_token_v2_exporter.open()
+        self.token_transfers_exporter.open()
+        self.token_transfers_v2_exporter.open()
 
     def _export(self):
         self.batch_work_executor.execute(
@@ -91,16 +91,16 @@ class ExportTokenTransfersJob(BaseJob):
 
             token_transfer = self.token_transfer_extractor.extract_transfer_from_log(log)
             if token_transfer is not None:
-                self.token_transfer_extractor.export_item(self.token_transfer_mapper.token_transfer_to_dict(token_transfer))
+                self.token_transfers_exporter.export_item(self.token_transfer_mapper.token_transfer_to_dict(token_transfer))
             
             token_transfers_list_v2 = self.token_transfer_v2_extractor.extract_transfer_from_log(log)
             if token_transfers_list_v2 is not None:
                 for token_transfer_v2 in token_transfers_list_v2:
-                    self.transfer_token_v2_exporter.export_item(self.token_transfer_v2_mapper.token_transfer_to_dict(token_transfer_v2))
+                    self.token_transfers_v2_exporter.export_item(self.token_transfer_v2_mapper.token_transfer_to_dict(token_transfer_v2))
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
     def _end(self):
         self.batch_work_executor.shutdown()
-        self.transfer_token_exporter.close()
-        self.transfer_token_v2_exporter.close()
+        self.token_transfers_exporter.close()
+        self.token_transfers_v2_exporter.close()

@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 class EthTokenTransferV2Extractor(object):
     def extract_transfer_from_log(self, receipt_log):
-
         topics = receipt_log.topics
         if topics is None or len(topics) < 1:
             # This is normal, topics can be empty for anonymous events
