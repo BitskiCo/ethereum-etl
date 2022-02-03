@@ -38,9 +38,9 @@ class EthTokenTransferV2Extractor(object):
             
             #ERC20 only has three topics - 1) signature hash 2) from_address 3) to_address
             if len(topics) == 3:
-                return [build_token_transfer(receipt_log, word_to_address(topics_with_data[1]), word_to_address(topics_with_data[2]), "ERC20", hex_to_dec(topics_with_data[3]), "ERC20")]
+                return [build_token_transfer(receipt_log, word_to_address(topics_with_data[1]), word_to_address(topics_with_data[2]), "1", topics_with_data[3], "ERC20")]
             else:
-                return [build_token_transfer(receipt_log, word_to_address(topics_with_data[1]), word_to_address(topics_with_data[2]), hex_to_dec(topics_with_data[3]), 1, "ERC721")]
+                return [build_token_transfer(receipt_log, word_to_address(topics_with_data[1]), word_to_address(topics_with_data[2]), topics_with_data[3], 1, "ERC721")]
            
         elif topics[0] == ERC1155_TRANSFER_SINGLE_TOPIC:
             if len(topics_with_data) != 6:
@@ -48,7 +48,7 @@ class EthTokenTransferV2Extractor(object):
                                .format(receipt_log.log_index, receipt_log.transaction_hash))
                 return None
 
-            return [build_token_transfer(receipt_log, word_to_address(topics_with_data[2]), word_to_address(topics_with_data[3]), hex_to_dec(topics_with_data[4]), hex_to_dec(topics_with_data[5]), "ERC1155")]
+            return [build_token_transfer(receipt_log, word_to_address(topics_with_data[2]), word_to_address(topics_with_data[3]), topics_with_data[4], topics_with_data[5], "ERC1155")]
         
         elif topics[0] == ERC1155_TRANSFER_BATCH_TOPIC:
             #todo cleanup
@@ -64,7 +64,7 @@ class EthTokenTransferV2Extractor(object):
 
             token_transfers = []
             for token_id, amount in zip(token_ids, amounts):
-                token_transfers.append(build_token_transfer(receipt_log, word_to_address(topics_with_data[2]), word_to_address(topics_with_data[3]), hex_to_dec(token_id), hex_to_dec(amount), "ERC1155"))
+                token_transfers.append(build_token_transfer(receipt_log, word_to_address(topics_with_data[2]), word_to_address(topics_with_data[3]), token_id, amount, "ERC1155"))
             return token_transfers
         else:
             return None
@@ -80,6 +80,7 @@ def build_token_transfer(receipt_log, from_address, to_address, token_id, amount
     token_transfer.token_id = token_id
     token_transfer.amount = amount
     token_transfer.token_type = token_type
+    
     return token_transfer
 
 def split_to_words(data):

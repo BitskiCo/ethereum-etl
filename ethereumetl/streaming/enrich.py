@@ -152,7 +152,8 @@ def enrich_token_transfers_v2(blocks, token_transfers_v2):
             'token_id',
             'transaction_hash',
             'log_index',
-            'block_number'
+            'block_number',
+            'token_type',
         ],
         [
             ('timestamp', 'block_timestamp'),
