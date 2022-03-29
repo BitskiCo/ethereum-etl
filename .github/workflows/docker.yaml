@@ -6,7 +6,7 @@ on:
       - .github/workflows/docker.yaml
       - Dockerfile
   push:
-    branches: [main]
+    branches: [develop]
 
 jobs:
   publish:
