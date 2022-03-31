@@ -20,8 +20,8 @@ def test_extract_transfer_from_receipt_log_erc20():
 
     token_transfers = token_transfer_extractor.extract_transfer_from_log(log)
     assert len(token_transfers) == 1
-    assert token_transfers[0].token_id == "ERC20"
-    assert token_transfers[0].amount == 50000000
+    assert token_transfers[0].token_id == '0x0000000000000000000000000000000000000000000000000000000000000001'
+    assert token_transfers[0].amount == '0x0000000000000000000000000000000000000000000000000000000002faf080'
     assert token_transfers[0].block_number == 14051054
     assert token_transfers[0].from_address == word_to_address('0x0000000000000000000000007a686933fc67023aabd424f35ad0b883332e2222')
     assert token_transfers[0].to_address == word_to_address('0x00000000000000000000000016011b51e022766c352b29b0c1ed423489f4d3ca')
@@ -45,8 +45,8 @@ def test_extract_transfer_from_receipt_log_erc721():
 
     token_transfers = token_transfer_extractor.extract_transfer_from_log(log)
     assert len(token_transfers) == 1
-    assert token_transfers[0].token_id == 1845
-    assert token_transfers[0].amount == 1
+    assert token_transfers[0].token_id == '0x0000000000000000000000000000000000000000000000000000000000000735'
+    assert token_transfers[0].amount == '0x0000000000000000000000000000000000000000000000000000000000000001'
     assert token_transfers[0].block_number == 14051620
     assert token_transfers[0].from_address == word_to_address('0x000000000000000000000000b5fdfbbddc872d08d0203cd6d69d5ce67eb4c761')
     assert token_transfers[0].to_address == word_to_address('0x00000000000000000000000040b060a0ac95db3d5211b687511632b46c5d3bb7')
@@ -71,8 +71,8 @@ def test_extract_transfer_from_receipt_log_erc1155_single():
 
     token_transfers = token_transfer_extractor.extract_transfer_from_log(log)
     assert len(token_transfers) == 1
-    assert token_transfers[0].token_id == 2
-    assert token_transfers[0].amount == 4
+    assert token_transfers[0].token_id == '0x0000000000000000000000000000000000000000000000000000000000000002'
+    assert token_transfers[0].amount == '0x0000000000000000000000000000000000000000000000000000000000000004'
     assert token_transfers[0].block_number == 1061946
     assert token_transfers[0].from_address == word_to_address('0x000000000000000000000000ab3e5a900663ea8c573b8f893d540d331fbab9f5')
     assert token_transfers[0].to_address == word_to_address('0x0000000000000000000000006a36f56e0a1bc32e187408f1651195d58cf688bd')
@@ -97,8 +97,8 @@ def test_extract_transfer_from_receipt_log_erc1155_batch():
     token_transfers = token_transfer_extractor.extract_transfer_from_log(log)
     assert len(token_transfers) == 10
     for iter in range(len(token_transfers)):
-        assert token_transfers[iter].token_id == iter + 1
-        assert token_transfers[iter].amount == 1
+        assert token_transfers[iter].token_id == '0x%064x' % (iter + 1)
+        assert token_transfers[iter].amount == '0x0000000000000000000000000000000000000000000000000000000000000001'
         assert token_transfers[iter].block_number == 1061946
         assert token_transfers[iter].from_address == word_to_address('0x0000000000000000000000000000000000000000000000000000000000000000')
         assert token_transfers[iter].to_address == word_to_address('0x000000000000000000000000991f3775c81d6f8331b9a812eda34ea48a7ea76d')
