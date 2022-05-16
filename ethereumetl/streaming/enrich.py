@@ -158,6 +158,7 @@ def enrich_token_transfers_v2(blocks, token_transfers_v2):
         [
             ('timestamp', 'block_timestamp'),
             ('hash', 'block_hash'),
+            ('chain_id', 1)
         ]))
 
     if len(result) != len(token_transfers_v2):
