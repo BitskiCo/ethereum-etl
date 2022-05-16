@@ -11,7 +11,8 @@ class EthTokenTransferV2Mapper(object):
             'transaction_hash': token_transfer_v2.transaction_hash,
             'log_index': token_transfer_v2.log_index,
             'block_number': token_transfer_v2.block_number,
-            'token_type' : token_transfer_v2.token_type,
+            'token_type': token_transfer_v2.token_type,
+            'chain_id': 1,
             #todo: clean up the versioning logic
             'version': 'token_transfer_v2_0'
         }
