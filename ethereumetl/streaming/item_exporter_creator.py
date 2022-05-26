@@ -24,25 +24,25 @@ from blockchainetl_common.jobs.exporters.console_item_exporter import ConsoleIte
 from blockchainetl_common.jobs.exporters.multi_item_exporter import MultiItemExporter
 
 DEFAULT_KAFKA_TOPIC_MAPPING = {
-    'block': 'polygon_blocks',
-    'transaction': 'polygon_transactions',
-    'log': 'polygon_logs',
-    'token_transfer': 'polygon_token_transfers',
-    'token_transfer_v2': 'polygon_token_transfers_v2',
-    'trace': 'polygon_traces',
-    'contract': 'polygon_contracts',
-    'token': 'polygon_tokens',
+    'block': 'blocks',
+    'transaction': 'transactions',
+    'log': 'logs',
+    'token_transfer': 'token_transfers',
+    'token_transfer_v2': 'token_transfers_v2',
+    'trace': 'traces',
+    'contract': 'contracts',
+    'token': 'tokens',
 }
 
 TESTNET_KAFKA_TOPIC_MAPPING = {
-    'block': 'testnet_polygon_blocks',
-    'transaction': 'testnet_polygon_transactions',
-    'log': 'testnet_polygon_logs',
-    'token_transfer': 'testnet_polygon_token_transfers',
-    'token_transfer_v2': 'testnet_polygon_token_transfers_v2',
-    'trace': 'testnet_polygon_traces',
-    'contract': 'testnet_polygon_contracts',
-    'token': 'testnet_polygon_tokens',
+    'block': 'testnet_blocks',
+    'transaction': 'testnet_transactions',
+    'log': 'testnet_logs',
+    'token_transfer': 'testnet_token_transfers',
+    'token_transfer_v2': 'testnet_token_transfers_v2',
+    'trace': 'testnet_traces',
+    'contract': 'testnet_contracts',
+    'token': 'testnet_tokens',
 }
 
 def create_item_exporters(outputs, testnet=False):
