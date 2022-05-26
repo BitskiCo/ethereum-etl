@@ -20,8 +20,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-from blockchainetl_common.jobs.exporters.console_item_exporter import ConsoleItemExporter
-from blockchainetl_common.jobs.exporters.multi_item_exporter import MultiItemExporter
+from blockchainetl.jobs.exporters.console_item_exporter import ConsoleItemExporter
+from blockchainetl.jobs.exporters.multi_item_exporter import MultiItemExporter
 
 DEFAULT_KAFKA_TOPIC_MAPPING = {
     'block': 'blocks',
