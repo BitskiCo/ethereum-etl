@@ -74,6 +74,7 @@ class EthContractService:
     def is_erc1155_contract(self, function_sighashes):
         c = ContractWrapper(function_sighashes)
         return c.implements('balanceOf(address,uint256)') and \
+               c.implements('balanceOfBatch(address[],uint256[])') and \
                c.implements('safeTransferFrom(address,address,uint256,uint256,bytes)') and \
                c.implements('safeBatchTransferFrom(address,address,uint256[],uint256[],bytes')
 
