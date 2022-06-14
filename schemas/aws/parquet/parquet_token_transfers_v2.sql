@@ -13,4 +13,4 @@ PARTITIONED BY (start_block BIGINT, end_block BIGINT)
 STORED AS PARQUET
 LOCATION 's3://<your_bucket>/ethereumetl/parquet/token_transfers_v2';
 
-MSCK REPAIR TABLE parquet_token_transfers;
+MSCK REPAIR TABLE parquet_token_transfers_v2;

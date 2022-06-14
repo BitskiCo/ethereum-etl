@@ -22,4 +22,4 @@ TBLPROPERTIES (
   'skip.header.line.count' = '1'
 );
 
-MSCK REPAIR TABLE token_transfers;
+MSCK REPAIR TABLE token_transfers_v2;
