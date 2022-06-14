@@ -24,25 +24,27 @@ from blockchainetl.jobs.exporters.console_item_exporter import ConsoleItemExport
 from blockchainetl.jobs.exporters.multi_item_exporter import MultiItemExporter
 
 DEFAULT_KAFKA_TOPIC_MAPPING = {
-    'block': 'blocks',
-    'transaction': 'transactions',
-    'log': 'logs',
-    'token_transfer': 'token_transfers',
+    'block': 'ethereum_blocks',
+    'transaction': 'ethereum_transactions',
+    'log': 'ethereum_logs',
+    'token_transfer': 'ethereum_token_transfers',
+    # todo(shashank): migrate token_transfers_v2 to new topic
     'token_transfer_v2': 'token_transfers_v2',
-    'trace': 'traces',
-    'contract': 'contracts',
-    'token': 'tokens',
+    'trace': 'ethereum_traces',
+    'contract': 'ethereum_contracts',
+    'token': 'ethereum_tokens',
 }
 
 TESTNET_KAFKA_TOPIC_MAPPING = {
-    'block': 'testnet_blocks',
-    'transaction': 'testnet_transactions',
-    'log': 'testnet_logs',
-    'token_transfer': 'testnet_token_transfers',
+    'block': 'ethereum_rinkeby_blocks',
+    'transaction': 'ethereum_rinkeby_transactions',
+    'log': 'ethereum_rinkeby_logs',
+    'token_transfer': 'ethereum_rinkeby_token_transfers',
+    # todo(shashank): migrate token_transfers_v2 to new topic
     'token_transfer_v2': 'testnet_token_transfers_v2',
-    'trace': 'testnet_traces',
-    'contract': 'testnet_contracts',
-    'token': 'testnet_tokens',
+    'trace': 'ethereum_rinkeby_traces',
+    'contract': 'ethereum_rinkeby_contracts',
+    'token': 'ethereum_rinkeby_tokens',
 }
 
 def create_item_exporters(outputs, testnet=False):
