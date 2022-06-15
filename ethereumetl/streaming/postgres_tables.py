@@ -105,6 +105,21 @@ TOKEN_TRANSFERS = Table(
     Column('block_hash', String),
 )
 
+TOKEN_TRANSFERS_V2 = Table(
+    'token_transfers_v2', metadata,
+    Column('contract_address', String),
+    Column('from_address', String),
+    Column('to_address', String),
+    Column('token_type', String),
+    Column('token_id', String),
+    Column('amount', Numeric(78)),
+    Column('transaction_hash', String, primary_key=True),
+    Column('log_index', BigInteger, primary_key=True),
+    Column('block_timestamp', TIMESTAMP),
+    Column('block_number', BigInteger),
+    Column('block_hash', String),
+)
+
 TRACES = Table(
     'traces', metadata,
     Column('transaction_hash', String),
