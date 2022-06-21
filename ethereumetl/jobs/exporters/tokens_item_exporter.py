@@ -29,7 +29,8 @@ FIELDS_TO_EXPORT = [
     'name',
     'decimals',
     'total_supply',
-    'block_number'
+    'block_number',
+    'chain_id'
 ]
 
 

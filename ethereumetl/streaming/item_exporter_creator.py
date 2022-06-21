@@ -47,14 +47,14 @@ TESTNET_KAFKA_TOPIC_MAPPING = {
     'token': 'ethereum_rinkeby_tokens',
 }
 
-def create_item_exporters(outputs, testnet=False):
+def create_item_exporters(outputs, testnet=False, chain_id=1):
     split_outputs = [output.strip() for output in outputs.split(',')] if outputs else ['console']
 
-    item_exporters = [create_item_exporter(output, testnet) for output in split_outputs]
+    item_exporters = [create_item_exporter(output, testnet, chain_id) for output in split_outputs]
     return MultiItemExporter(item_exporters)
 
 
-def create_item_exporter(output, testnet):
+def create_item_exporter(output, testnet, chain_id):
     item_exporter_type = determine_item_exporter_type(output)
     if item_exporter_type == ItemExporterType.PUBSUB:
         from blockchainetl.jobs.exporters.google_pubsub_item_exporter import GooglePubSubItemExporter
@@ -81,6 +81,7 @@ def create_item_exporter(output, testnet):
         from blockchainetl.jobs.exporters.converters.unix_timestamp_item_converter import UnixTimestampItemConverter
         from blockchainetl.jobs.exporters.converters.int_to_decimal_item_converter import IntToDecimalItemConverter
         from blockchainetl.jobs.exporters.converters.list_field_item_converter import ListFieldItemConverter
+        from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
         from ethereumetl.streaming.postgres_tables import BLOCKS, TRANSACTIONS, LOGS, TOKEN_TRANSFERS, TOKEN_TRANSFERS_V2, TRACES, TOKENS, CONTRACTS
 
         item_exporter = PostgresItemExporter(
@@ -95,17 +96,18 @@ def create_item_exporter(output, testnet):
                 'contract': create_insert_statement_for_table(CONTRACTS),
             },
             converters=[UnixTimestampItemConverter(), IntToDecimalItemConverter(),
-                        ListFieldItemConverter('topics', 'topic', fill=4)])
+                        ListFieldItemConverter('topics', 'topic', fill=4), ChainIdConverter(chain_id)])
     elif item_exporter_type == ItemExporterType.GCS:
         from blockchainetl.jobs.exporters.gcs_item_exporter import GcsItemExporter
         bucket, path = get_bucket_and_path_from_gcs_output(output)
         item_exporter = GcsItemExporter(bucket=bucket, path=path)
     elif item_exporter_type == ItemExporterType.CONSOLE:
-        item_exporter = ConsoleItemExporter()
+        from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
+        item_exporter = ConsoleItemExporter([ChainIdConverter(chain_id)])
     elif item_exporter_type == ItemExporterType.KAFKA:
         from blockchainetl.jobs.exporters.kafka_exporter import KafkaItemExporter
-        from blockchainetl.jobs.exporters.converters.testnet_chainid_converter import TestnetChainIDConverter
-        item_exporter = KafkaItemExporter(output, item_type_to_topic_mapping=TESTNET_KAFKA_TOPIC_MAPPING, converters=[TestnetChainIDConverter()]) if testnet else KafkaItemExporter(output, item_type_to_topic_mapping=DEFAULT_KAFKA_TOPIC_MAPPING); 
+        from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
+        item_exporter = KafkaItemExporter(output, item_type_to_topic_mapping=TESTNET_KAFKA_TOPIC_MAPPING, converters=[ChainIdConverter(chain_id)]) if testnet else KafkaItemExporter(output, item_type_to_topic_mapping=DEFAULT_KAFKA_TOPIC_MAPPING,  converters=[ChainIdConverter(chain_id)]); 
     else:
         raise ValueError('Unable to determine item exporter type for output ' + output)
 
