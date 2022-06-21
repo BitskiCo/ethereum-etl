@@ -9,10 +9,9 @@ CREATE EXTERNAL TABLE IF NOT EXISTS transactions (
     value DECIMAL(38,0),
     gas BIGINT,
     gas_price BIGINT,
-    input STRING,
-    chain_id BIGINT
+    input STRING
 )
-PARTITIONED BY (date STRING, chain_id BIGINT)
+PARTITIONED BY (date STRING)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
 WITH SERDEPROPERTIES (
     'serialization.format' = ',',

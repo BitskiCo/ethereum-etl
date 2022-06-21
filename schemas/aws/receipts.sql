@@ -7,8 +7,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS receipts (
     gas_used BIGINT,
     contract_address STRING,
     root STRING,
-    status BIGINT,
-    chain_id BIGINT
+    status BIGINT
 )
 PARTITIONED BY (start_block BIGINT, end_block BIGINT)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
