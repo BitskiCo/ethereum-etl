@@ -24,12 +24,14 @@
 import click
 
 from blockchainetl.file_utils import smart_open
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 from ethereumetl.jobs.export_receipts_job import ExportReceiptsJob
 from ethereumetl.jobs.exporters.receipts_and_logs_item_exporter import receipts_and_logs_item_exporter
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.utils import check_classic_provider_uri
+from ethereumetl.web3_utils import get_chain_id
 
 logging_basic_config()
 
@@ -52,13 +54,14 @@ def export_receipts_and_logs(batch_size, transaction_hashes, provider_uri, max_w
                              chain='ethereum'):
     """Exports receipts and logs."""
     provider_uri = check_classic_provider_uri(chain, provider_uri)
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     with smart_open(transaction_hashes, 'r') as transaction_hashes_file:
         job = ExportReceiptsJob(
             transaction_hashes_iterable=(transaction_hash.strip() for transaction_hash in transaction_hashes_file),
             batch_size=batch_size,
             batch_web3_provider=ThreadLocalProxy(lambda: get_provider_from_uri(provider_uri, batch=True)),
             max_workers=max_workers,
-            item_exporter=receipts_and_logs_item_exporter(receipts_output, logs_output),
+            item_exporter=receipts_and_logs_item_exporter(receipts_output, logs_output, converters=[ChainIdConverter(chain_id)]),
             export_receipts=receipts_output is not None,
             export_logs=logs_output is not None)
 

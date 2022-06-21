@@ -22,6 +22,7 @@
 
 
 from blockchainetl.jobs.exporters.composite_item_exporter import CompositeItemExporter
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 
 BLOCK_FIELDS_TO_EXPORT = [
     'number',
@@ -66,7 +67,7 @@ TRANSACTION_FIELDS_TO_EXPORT = [
 ]
 
 
-def blocks_and_transactions_item_exporter(blocks_output=None, transactions_output=None):
+def blocks_and_transactions_item_exporter(blocks_output=None, transactions_output=None, converters=()):
     return CompositeItemExporter(
         filename_mapping={
             'block': blocks_output,
@@ -75,5 +76,6 @@ def blocks_and_transactions_item_exporter(blocks_output=None, transactions_outpu
         field_mapping={
             'block': BLOCK_FIELDS_TO_EXPORT,
             'transaction': TRANSACTION_FIELDS_TO_EXPORT
-        }
+        },
+        converters=converters
     )

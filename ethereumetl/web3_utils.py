@@ -28,3 +28,7 @@ def build_web3(provider):
     w3 = Web3(provider)
     w3.middleware_onion.inject(geth_poa_middleware, layer=0)
     return w3
+
+def get_chain_id(provider):
+    web3 = build_web3(provider)
+    return int(web3.eth.chain_id)

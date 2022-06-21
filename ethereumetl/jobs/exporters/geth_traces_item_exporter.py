@@ -22,6 +22,7 @@
 
 
 from blockchainetl.jobs.exporters.composite_item_exporter import CompositeItemExporter
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 
 FIELDS_TO_EXPORT = [
     'block_number',
@@ -30,12 +31,13 @@ FIELDS_TO_EXPORT = [
 ]
 
 
-def geth_traces_item_exporter(geth_traces_output):
+def geth_traces_item_exporter(geth_traces_output, chain_id=1):
     return CompositeItemExporter(
         filename_mapping={
             'geth_trace': geth_traces_output
         },
         field_mapping={
             'geth_trace': FIELDS_TO_EXPORT
-        }
+        },
+        converters=converters
     )

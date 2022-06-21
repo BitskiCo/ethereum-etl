@@ -24,12 +24,14 @@
 import click
 
 from blockchainetl.file_utils import smart_open
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 from ethereumetl.jobs.export_contracts_job import ExportContractsJob
 from ethereumetl.jobs.exporters.contracts_item_exporter import contracts_item_exporter
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.utils import check_classic_provider_uri
+from ethereumetl.web3_utils import get_chain_id
 
 logging_basic_config()
 
@@ -47,6 +49,7 @@ logging_basic_config()
 def export_contracts(batch_size, contract_addresses, output, max_workers, provider_uri, chain='ethereum'):
     """Exports contracts bytecode and sighashes."""
     check_classic_provider_uri(chain, provider_uri)
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     with smart_open(contract_addresses, 'r') as contract_addresses_file:
         contract_addresses = (contract_address.strip() for contract_address in contract_addresses_file
                               if contract_address.strip())
@@ -54,7 +57,7 @@ def export_contracts(batch_size, contract_addresses, output, max_workers, provid
             contract_addresses_iterable=contract_addresses,
             batch_size=batch_size,
             batch_web3_provider=ThreadLocalProxy(lambda: get_provider_from_uri(provider_uri, batch=True)),
-            item_exporter=contracts_item_exporter(output),
+            item_exporter=contracts_item_exporter(output, converters=[ChainIdConverter(chain_id)]),
             max_workers=max_workers)
 
         job.run()

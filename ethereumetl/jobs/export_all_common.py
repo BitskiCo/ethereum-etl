@@ -26,6 +26,7 @@ import logging
 import os
 import shutil
 from time import time
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 
 from ethereumetl.csv_utils import set_max_field_size_limit
 from blockchainetl.file_utils import smart_open
@@ -64,7 +65,7 @@ def extract_csv_column_unique(input, output, column):
             output_file.write(row[column] + '\n')
 
 
-def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_size):
+def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_size, chain_id):
 
     for batch_start_block, batch_end_block, partition_dir in partitions:
         # # # start # # #
@@ -119,7 +120,7 @@ def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_s
             batch_size=batch_size,
             batch_web3_provider=ThreadLocalProxy(lambda: get_provider_from_uri(provider_uri, batch=True)),
             max_workers=max_workers,
-            item_exporter=blocks_and_transactions_item_exporter(blocks_file, transactions_file),
+            item_exporter=blocks_and_transactions_item_exporter(blocks_file, transactions_file, [ChainIdConverter(chain_id)]),
             export_blocks=blocks_file is not None,
             export_transactions=transactions_file is not None)
         job.run()
@@ -162,8 +163,8 @@ def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_s
                 end_block=batch_end_block,
                 batch_size=batch_size,
                 web3=ThreadLocalProxy(lambda: build_web3(get_provider_from_uri(provider_uri))),
-                token_transfers_exporter=token_transfers_item_exporter(token_transfers_file),
-                token_transfers_v2_exporter=token_transfers_v2_item_exporter(token_transfers_v2_file),
+                token_transfers_exporter=token_transfers_item_exporter(token_transfers_file, [ChainIdConverter(chain_id)]),
+                token_transfers_v2_exporter=token_transfers_v2_item_exporter(token_transfers_v2_file, [ChainIdConverter(chain_id)]),
                 max_workers=max_workers)
             job.run()
 
@@ -216,7 +217,7 @@ def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_s
                 batch_size=batch_size,
                 batch_web3_provider=ThreadLocalProxy(lambda: get_provider_from_uri(provider_uri, batch=True)),
                 max_workers=max_workers,
-                item_exporter=receipts_and_logs_item_exporter(receipts_file, logs_file),
+                item_exporter=receipts_and_logs_item_exporter(receipts_file, logs_file, [ChainIdConverter(chain_id)]),
                 export_receipts=receipts_file is not None,
                 export_logs=logs_file is not None)
             job.run()
@@ -254,7 +255,7 @@ def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_s
                 contract_addresses_iterable=contract_addresses,
                 batch_size=batch_size,
                 batch_web3_provider=ThreadLocalProxy(lambda: get_provider_from_uri(provider_uri, batch=True)),
-                item_exporter=contracts_item_exporter(contracts_file),
+                item_exporter=contracts_item_exporter(contracts_file, [ChainIdConverter(chain_id)]),
                 max_workers=max_workers)
             job.run()
 
@@ -289,7 +290,7 @@ def export_all_common(partitions, output_dir, provider_uri, max_workers, batch_s
                 job = ExportTokensJob(
                     token_addresses_iterable=(token_address.strip() for token_address in token_addresses),
                     web3=ThreadLocalProxy(lambda: build_web3(get_provider_from_uri(provider_uri))),
-                    item_exporter=tokens_item_exporter(tokens_file),
+                    item_exporter=tokens_item_exporter(tokens_file, [ChainIdConverter(chain_id)]),
                     max_workers=max_workers)
                 job.run()
 

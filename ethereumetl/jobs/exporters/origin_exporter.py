@@ -35,24 +35,26 @@ SHOP_FIELDS_TO_EXPORT = [
     'image'
 ]
 
-def origin_marketplace_listing_item_exporter(output):
+def origin_marketplace_listing_item_exporter(output, converters=()):
     return CompositeItemExporter(
         filename_mapping={
             'origin_marketplace_listing': output
         },
         field_mapping={
             'origin_marketplace_listing': MARKETPLACE_FIELDS_TO_EXPORT
-        }
+        },
+        converters=converters
     )
 
-def origin_shop_product_item_exporter(output):
+def origin_shop_product_item_exporter(output, converters=()):
     return CompositeItemExporter(
         filename_mapping={
             'origin_shop_product': output
         },
         field_mapping={
             'origin_shop_product': SHOP_FIELDS_TO_EXPORT
-        }
+        },
+        converters=converters
     )
 
 

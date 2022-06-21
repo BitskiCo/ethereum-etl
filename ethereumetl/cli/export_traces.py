@@ -26,10 +26,12 @@ import click
 from ethereumetl.web3_utils import build_web3
 
 from ethereumetl.jobs.export_traces_job import ExportTracesJob
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
 from ethereumetl.jobs.exporters.traces_item_exporter import traces_item_exporter
+from ethereumetl.web3_utils import get_chain_id
 
 logging_basic_config()
 
@@ -49,6 +51,7 @@ logging_basic_config()
 @click.option('-c', '--chain', default='ethereum', show_default=True, type=str, help='The chain network to connect to.')
 def export_traces(start_block, end_block, batch_size, output, max_workers, provider_uri,
                   genesis_traces, daofork_traces, timeout=60, chain='ethereum'):
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     """Exports traces from parity node."""
     if chain == 'classic' and daofork_traces == True:
         raise ValueError(
@@ -58,7 +61,7 @@ def export_traces(start_block, end_block, batch_size, output, max_workers, provi
         end_block=end_block,
         batch_size=batch_size,
         web3=ThreadLocalProxy(lambda: build_web3(get_provider_from_uri(provider_uri, timeout=timeout))),
-        item_exporter=traces_item_exporter(output),
+        item_exporter=traces_item_exporter(output, converters=[ChainIdConverter(chain_id)]),
         max_workers=max_workers,
         include_genesis_traces=genesis_traces,
         include_daofork_traces=daofork_traces)

@@ -26,12 +26,14 @@ import click
 from ethereumetl.web3_utils import build_web3
 
 from blockchainetl.file_utils import smart_open
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 from ethereumetl.jobs.export_tokens_job import ExportTokensJob
 from ethereumetl.jobs.exporters.tokens_item_exporter import tokens_item_exporter
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.utils import check_classic_provider_uri
+from ethereumetl.web3_utils import get_chain_id
 
 logging_basic_config()
 
@@ -46,13 +48,14 @@ logging_basic_config()
                    'file://$HOME/Library/Ethereum/geth.ipc or https://mainnet.infura.io')
 @click.option('-c', '--chain', default='ethereum', show_default=True, type=str, help='The chain network to connect to.')
 def export_tokens(token_addresses, output, max_workers, provider_uri, chain='ethereum'):
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     """Exports ERC20/ERC721 tokens."""
     provider_uri = check_classic_provider_uri(chain, provider_uri)
     with smart_open(token_addresses, 'r') as token_addresses_file:
         job = ExportTokensJob(
             token_addresses_iterable=(token_address.strip() for token_address in token_addresses_file),
             web3=ThreadLocalProxy(lambda: build_web3(get_provider_from_uri(provider_uri))),
-            item_exporter=tokens_item_exporter(output),
+            item_exporter=tokens_item_exporter(output, converters=[ChainIdConverter(chain_id)]),
             max_workers=max_workers)
 
         job.run()

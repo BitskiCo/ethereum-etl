@@ -23,12 +23,14 @@ import click
 
 from ethereumetl.web3_utils import build_web3
 
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.jobs.export_origin_job import ExportOriginJob
 from ethereumetl.jobs.exporters.origin_exporter import origin_marketplace_listing_item_exporter, origin_shop_product_item_exporter
 from ethereumetl.ipfs.origin import get_origin_ipfs_client
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
+from ethereumetl.web3_utils import get_chain_id
 
 logging_basic_config()
 
@@ -43,6 +45,7 @@ logging_basic_config()
 @click.option('-p', '--provider-uri', required=True, type=str,
               help='The URI of the web3 provider e.g. file://$HOME/Library/Ethereum/geth.ipc or http://localhost:8545/')
 def export_origin(start_block, end_block, batch_size, marketplace_output, shop_output, max_workers, provider_uri):
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     """Exports Origin Protocol data."""
     job = ExportOriginJob(
         start_block=start_block,

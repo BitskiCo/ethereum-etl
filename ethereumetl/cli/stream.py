@@ -30,6 +30,7 @@ from ethereumetl.web3_utils import build_web3
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.streaming.item_exporter_creator import create_item_exporters
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
+from ethereumetl.web3_utils import get_chain_id
 
 
 @click.command(context_settings=dict(help_option_names=['-h', '--help']))
@@ -68,7 +69,7 @@ def stream(last_synced_block_file, lag, provider_uri, output, start_block, entit
     provider_uri = pick_random_provider_uri(provider_uri)
     logging.info('Using provider: ' + provider_uri)
 
-    chain_id = get_chain_id(provider_uri)
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     logging.info('Using chain_id: ' + str(chain_id))
 
     streamer_adapter = EthStreamerAdapter(
@@ -106,8 +107,3 @@ def parse_entity_types(entity_types):
 def pick_random_provider_uri(provider_uri):
     provider_uris = [uri.strip() for uri in provider_uri.split(',')]
     return random.choice(provider_uris)
-
-def get_chain_id(provider_uri):
-    provider = get_provider_from_uri(provider_uri)
-    web3 = build_web3(provider)
-    return int(web3.eth.chain_id)

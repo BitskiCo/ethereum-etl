@@ -23,6 +23,7 @@
 
 import click
 
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 from ethereumetl.web3_utils import build_web3
 
 from ethereumetl.jobs.export_token_transfers_job import ExportTokenTransfersJob
@@ -31,6 +32,7 @@ from ethereumetl.jobs.exporters.token_transfers_v2_item_exporter import token_tr
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
+from ethereumetl.web3_utils import get_chain_id
 
 logging_basic_config()
 
@@ -45,14 +47,15 @@ logging_basic_config()
               help='The URI of the web3 provider e.g. file://$HOME/Library/Ethereum/geth.ipc or http://localhost:8545/')
 @click.option('-t', '--tokens', default=None, show_default=True, type=str, multiple=True, help='The list of token addresses to filter by.')
 def export_token_transfers(start_block, end_block, batch_size, output, max_workers, provider_uri, tokens):
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     """Exports ERC20/ERC721 transfers."""
     job = ExportTokenTransfersJob(
         start_block=start_block,
         end_block=end_block,
         batch_size=batch_size,
         web3=ThreadLocalProxy(lambda: build_web3(get_provider_from_uri(provider_uri))),
-        token_transfers_exporter=token_transfers_item_exporter(output),
-        token_transfers_v2_exporter=token_transfers_v2_item_exporter(output),
+        token_transfers_exporter=token_transfers_item_exporter(output, converters=[ChainIdConverter(chain_id)]),
+        token_transfers_v2_exporter=token_transfers_v2_item_exporter(output, converters=[ChainIdConverter(chain_id)]),
         max_workers=max_workers,
         tokens=tokens)
     job.run()

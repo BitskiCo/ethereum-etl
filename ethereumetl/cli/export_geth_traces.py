@@ -23,11 +23,13 @@
 
 import click
 
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 from ethereumetl.jobs.export_geth_traces_job import ExportGethTracesJob
 from ethereumetl.jobs.exporters.geth_traces_item_exporter import geth_traces_item_exporter
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
+from ethereumetl.web3_utils import get_chain_id
 
 logging_basic_config()
 
@@ -43,6 +45,7 @@ logging_basic_config()
               help='The URI of the web3 provider e.g. '
                    'file://$HOME/Library/Ethereum/geth.ipc or http://localhost:8545/')
 def export_geth_traces(start_block, end_block, batch_size, output, max_workers, provider_uri):
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     """Exports traces from geth node."""
     job = ExportGethTracesJob(
         start_block=start_block,
@@ -50,6 +53,6 @@ def export_geth_traces(start_block, end_block, batch_size, output, max_workers, 
         batch_size=batch_size,
         batch_web3_provider=ThreadLocalProxy(lambda: get_provider_from_uri(provider_uri, batch=True)),
         max_workers=max_workers,
-        item_exporter=geth_traces_item_exporter(output))
+        item_exporter=geth_traces_item_exporter(output, converters=[ChainIdConverter(chain_id)]))
 
     job.run()

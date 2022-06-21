@@ -27,7 +27,7 @@ import re
 from datetime import datetime, timedelta
 
 from blockchainetl.logging_utils import logging_basic_config
-from ethereumetl.web3_utils import build_web3
+from ethereumetl.web3_utils import build_web3, get_chain_id
 
 from ethereumetl.jobs.export_all_common import export_all_common
 from ethereumetl.providers.auto import get_provider_from_uri
@@ -120,5 +120,6 @@ def export_all(start, end, partition_batch_size, provider_uri, output_dir, max_w
                chain='ethereum'):
     """Exports all data for a range of blocks."""
     provider_uri = check_classic_provider_uri(chain, provider_uri)
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     export_all_common(get_partitions(start, end, partition_batch_size, provider_uri),
-                      output_dir, provider_uri, max_workers, export_batch_size)
+                      output_dir, provider_uri, max_workers, export_batch_size, chain_id)

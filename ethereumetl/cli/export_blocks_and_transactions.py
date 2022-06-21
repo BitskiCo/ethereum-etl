@@ -23,12 +23,14 @@
 
 import click
 
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 from ethereumetl.jobs.export_blocks_job import ExportBlocksJob
 from ethereumetl.jobs.exporters.blocks_and_transactions_item_exporter import blocks_and_transactions_item_exporter
 from blockchainetl.logging_utils import logging_basic_config
 from ethereumetl.providers.auto import get_provider_from_uri
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
 from ethereumetl.utils import check_classic_provider_uri
+from ethereumetl.web3_utils import get_chain_id
 
 logging_basic_config()
 
@@ -53,14 +55,14 @@ def export_blocks_and_transactions(start_block, end_block, batch_size, provider_
     provider_uri = check_classic_provider_uri(chain, provider_uri)
     if blocks_output is None and transactions_output is None:
         raise ValueError('Either --blocks-output or --transactions-output options must be provided')
-
+    chain_id = get_chain_id(get_provider_from_uri(provider_uri))
     job = ExportBlocksJob(
         start_block=start_block,
         end_block=end_block,
         batch_size=batch_size,
         batch_web3_provider=ThreadLocalProxy(lambda: get_provider_from_uri(provider_uri, batch=True)),
         max_workers=max_workers,
-        item_exporter=blocks_and_transactions_item_exporter(blocks_output, transactions_output),
+        item_exporter=blocks_and_transactions_item_exporter(blocks_output, transactions_output, converters=[ChainIdConverter(cha)]),
         export_blocks=blocks_output is not None,
         export_transactions=transactions_output is not None)
     job.run()

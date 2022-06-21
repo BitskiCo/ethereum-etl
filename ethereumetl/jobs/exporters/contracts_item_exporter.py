@@ -22,6 +22,7 @@
 
 
 from blockchainetl.jobs.exporters.composite_item_exporter import CompositeItemExporter
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 
 FIELDS_TO_EXPORT = [
     'address',
@@ -35,12 +36,13 @@ FIELDS_TO_EXPORT = [
 ]
 
 
-def contracts_item_exporter(contracts_output):
+def contracts_item_exporter(contracts_output, converters=()):
     return CompositeItemExporter(
         filename_mapping={
             'contract': contracts_output
         },
         field_mapping={
             'contract': FIELDS_TO_EXPORT
-        }
+        },
+        converters=converters
     )

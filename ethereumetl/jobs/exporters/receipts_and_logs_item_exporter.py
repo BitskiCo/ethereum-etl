@@ -22,6 +22,7 @@
 
 
 from blockchainetl.jobs.exporters.composite_item_exporter import CompositeItemExporter
+from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
 
 RECEIPT_FIELDS_TO_EXPORT = [
     'transaction_hash',
@@ -50,7 +51,7 @@ LOG_FIELDS_TO_EXPORT = [
 ]
 
 
-def receipts_and_logs_item_exporter(receipts_output=None, logs_output=None):
+def receipts_and_logs_item_exporter(receipts_output=None, logs_output=None, converters=()):
     return CompositeItemExporter(
         filename_mapping={
             'receipt': receipts_output,
@@ -59,5 +60,6 @@ def receipts_and_logs_item_exporter(receipts_output=None, logs_output=None):
         field_mapping={
             'receipt': RECEIPT_FIELDS_TO_EXPORT,
             'log': LOG_FIELDS_TO_EXPORT
-        }
+        },
+        converters=converters
     )
