@@ -16,7 +16,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS blocks (
     gas_limit BIGINT,
     gas_used BIGINT,
     timestamp BIGINT,
-    transaction_count BIGINT
+    transaction_count BIGINT,
+    chain_id BIGINT
 )
 PARTITIONED BY (start_block BIGINT, end_block BIGINT)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'

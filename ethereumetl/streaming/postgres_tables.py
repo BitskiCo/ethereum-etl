@@ -49,6 +49,7 @@ BLOCKS = Table(
     Column('gas_used', BigInteger),
     Column('transaction_count', BigInteger),
     Column('base_fee_per_gas', BigInteger),
+    Column('chain_id', BigInteger),
 )
 
 TRANSACTIONS = Table(
@@ -74,6 +75,7 @@ TRANSACTIONS = Table(
     Column('max_priority_fee_per_gas', BigInteger),
     Column('transaction_type', BigInteger),
     Column('receipt_effective_gas_price', BigInteger),
+    Column('chain_id', BigInteger),
 )
 
 LOGS = Table(
@@ -90,6 +92,7 @@ LOGS = Table(
     Column('block_timestamp', TIMESTAMP),
     Column('block_number', BigInteger),
     Column('block_hash', String),
+    Column('chain_id', BigInteger),
 )
 
 TOKEN_TRANSFERS = Table(
@@ -103,6 +106,7 @@ TOKEN_TRANSFERS = Table(
     Column('block_timestamp', TIMESTAMP),
     Column('block_number', BigInteger),
     Column('block_hash', String),
+    Column('chain_id', BigInteger),
 )
 
 TOKEN_TRANSFERS_V2 = Table(
@@ -118,6 +122,7 @@ TOKEN_TRANSFERS_V2 = Table(
     Column('block_timestamp', TIMESTAMP),
     Column('block_number', BigInteger),
     Column('block_hash', String),
+    Column('chain_id', BigInteger),
 )
 
 TRACES = Table(
@@ -142,6 +147,7 @@ TRACES = Table(
     Column('block_number', BigInteger),
     Column('block_hash', String),
     Column('trace_id', String, primary_key=True),
+    Column('chain_id', BigInteger),
 )
 
 TOKENS = Table(
@@ -153,7 +159,8 @@ TOKENS = Table(
     Column('function_sighashes', ARRAY(String)),
     Column('total_supply', Numeric(78)),
     Column('block_number', BigInteger),
-    PrimaryKeyConstraint('address', 'block_number', name='tokens_pk'),
+    Column('chain_id', BigInteger),
+    PrimaryKeyConstraint('address', 'block_number', 'chain_id', name='tokens_pk'),
 )
 
 CONTRACTS = Table(
@@ -165,5 +172,6 @@ CONTRACTS = Table(
     Column('is_erc721', Boolean),
     Column('is_erc1155', Boolean),
     Column('block_number', BigInteger),
-    PrimaryKeyConstraint('address', 'block_number', name='contracts_pk'),
+    Column('chain_id', BigInteger),
+    PrimaryKeyConstraint('address', 'block_number', 'chain_id', name='contracts_pk'),
 )

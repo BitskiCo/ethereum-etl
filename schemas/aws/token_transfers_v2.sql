@@ -7,7 +7,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS token_transfers_v2 (
     token_ids STRING,
     transaction_hash STRING,
     log_index BIGINT,
-    block_number BIGINT
+    block_number BIGINT,
+    chain_id BIGINT
 )
 PARTITIONED BY (start_block BIGINT, end_block BIGINT)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'

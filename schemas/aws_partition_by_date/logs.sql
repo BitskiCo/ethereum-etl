@@ -6,9 +6,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS logs (
     block_number BIGINT,
     address STRING,
     data STRING,
-    topics STRING
+    topics STRING,
+    chain_id BIGINT
 )
-PARTITIONED BY (date STRING)
+PARTITIONED BY (date STRING, chain_id BIGINT)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
 WITH SERDEPROPERTIES (
     'serialization.format' = ',',

@@ -10,7 +10,8 @@ FIELDS_TO_EXPORT = [
     'token_ids'
     'transaction_hash',
     'log_index',
-    'block_number'
+    'block_number',
+    'chain_id'
 ]
 
 

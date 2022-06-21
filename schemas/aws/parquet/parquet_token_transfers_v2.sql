@@ -7,9 +7,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS parquet_token_transfers_v2 (
     token_ids STRING,
     transaction_hash STRING,
     log_index BIGINT,
-    block_number BIGINT
+    block_number BIGINT,
+    chain_id BIGINT
 )
-PARTITIONED BY (start_block BIGINT, end_block BIGINT)
+PARTITIONED BY (start_block BIGINT, end_block BIGINT, chain_id BIGINT)
 STORED AS PARQUET
 LOCATION 's3://<your_bucket>/ethereumetl/parquet/token_transfers_v2';
 
