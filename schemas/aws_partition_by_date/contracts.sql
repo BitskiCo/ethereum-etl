@@ -4,9 +4,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS contracts (
     function_sighashes STRING,
     is_erc20 BOOLEAN,
     is_erc721 BOOLEAN,
-    is_erc1155 BOOLEAN
+    is_erc1155 BOOLEAN,
+    chain_id BIGINT
 )
-PARTITIONED BY (date STRING)
+PARTITIONED BY (date STRING, chain_id BIGINT)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
 WITH SERDEPROPERTIES (
     'serialization.format' = ',',

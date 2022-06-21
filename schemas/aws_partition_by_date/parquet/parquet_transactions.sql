@@ -9,9 +9,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS parquet_transactions (
     value DECIMAL(38,0),
     gas BIGINT,
     gas_price BIGINT,
-    input STRING
+    input STRING,
+    chain_id BIGINT
 )
-PARTITIONED BY (start_block BIGINT, end_block BIGINT)
+PARTITIONED BY (start_block BIGINT, end_block BIGINT, chain_id BIGINT)
 STORED AS PARQUET
 LOCATION 's3://<your_bucket>/ethereumetl/parquet/transactions';
 

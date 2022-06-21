@@ -5,9 +5,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS token_transfers (
     value DECIMAL(38,0),
     transaction_hash STRING,
     log_index BIGINT,
-    block_number BIGINT
+    block_number BIGINT,
+    chain_id BIGINT
 )
-PARTITIONED BY (date STRING)
+PARTITIONED BY (date STRING, chain_id BIGINT)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
 WITH SERDEPROPERTIES (
     'serialization.format' = ',',

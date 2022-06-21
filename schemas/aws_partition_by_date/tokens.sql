@@ -3,9 +3,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS tokens (
     symbol STRING,
     name STRING,
     decimals BIGINT,
-    total_supply DECIMAL(38,0)
+    total_supply DECIMAL(38,0),
+    chain_id BIGINT
 )
-PARTITIONED BY (date STRING)
+PARTITIONED BY (date STRING, chain_id BIGINT)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
 WITH SERDEPROPERTIES (
     'serialization.format' = ',',
