@@ -130,7 +130,7 @@ def determine_item_exporter_type(output):
         return ItemExporterType.PUBSUB
     if output is not None and output.startswith('kafka'):
         return ItemExporterType.KAFKA
-    elif output is not None and output.startswith('postgresql'):
+    elif output is not None and (output.startswith('postgresql') or output.startswith('cockroachdb')):
         return ItemExporterType.POSTGRES
     elif output is not None and output.startswith('gs://'):
         return ItemExporterType.GCS
