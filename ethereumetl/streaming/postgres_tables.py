@@ -49,7 +49,7 @@ BLOCKS = Table(
     Column('gas_used', BigInteger),
     Column('transaction_count', BigInteger),
     Column('base_fee_per_gas', BigInteger),
-    Column('chain_id', BigInteger),
+    Column('chain_id', BigInteger, primary_key=True),
 )
 
 TRANSACTIONS = Table(
@@ -75,7 +75,7 @@ TRANSACTIONS = Table(
     Column('max_priority_fee_per_gas', BigInteger),
     Column('transaction_type', BigInteger),
     Column('receipt_effective_gas_price', BigInteger),
-    Column('chain_id', BigInteger),
+    Column('chain_id', BigInteger, primary_key=True),
 )
 
 LOGS = Table(
@@ -92,7 +92,7 @@ LOGS = Table(
     Column('block_timestamp', TIMESTAMP),
     Column('block_number', BigInteger),
     Column('block_hash', String),
-    Column('chain_id', BigInteger),
+    Column('chain_id', BigInteger, primary_key=True),
 )
 
 TOKEN_TRANSFERS = Table(
@@ -106,7 +106,7 @@ TOKEN_TRANSFERS = Table(
     Column('block_timestamp', TIMESTAMP),
     Column('block_number', BigInteger),
     Column('block_hash', String),
-    Column('chain_id', BigInteger),
+    Column('chain_id', BigInteger, primary_key=True),
 )
 
 TOKEN_TRANSFERS_V2 = Table(
@@ -122,7 +122,7 @@ TOKEN_TRANSFERS_V2 = Table(
     Column('block_timestamp', TIMESTAMP),
     Column('block_number', BigInteger),
     Column('block_hash', String),
-    Column('chain_id', BigInteger),
+    Column('chain_id', BigInteger, primary_key=True),
 )
 
 TRACES = Table(
