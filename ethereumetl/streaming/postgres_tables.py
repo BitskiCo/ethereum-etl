@@ -96,7 +96,7 @@ LOGS = Table(
 )
 
 TOKEN_TRANSFERS = Table(
-    'token_transfers', metadata,
+    'token_transfers_legacy', metadata,
     Column('token_address', String),
     Column('from_address', String),
     Column('to_address', String),
@@ -110,7 +110,7 @@ TOKEN_TRANSFERS = Table(
 )
 
 TOKEN_TRANSFERS_V2 = Table(
-    'token_transfers_v2', metadata,
+    'token_transfers', metadata,
     Column('contract_address', String),
     Column('from_address', String),
     Column('to_address', String),
