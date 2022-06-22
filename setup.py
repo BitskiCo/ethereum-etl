@@ -48,7 +48,7 @@ setup(
             'google-cloud-storage==1.33.0',
             'kafka-python==2.0.2',
             'sqlalchemy==1.4',
-            'pg8000==1.16.6',
+            'psycopg2==2.9.3',
             # This library is a dependency for google-cloud-pubsub, starting from 0.3.22 it requires Rust,
             # that's why  we lock the version here
             'libcst==0.3.21'

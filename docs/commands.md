@@ -210,8 +210,8 @@ e.g. `-e block,transaction,log,token_transfer,trace,contract,token`.
 - Use `--output` option to specify the Google Pub/Sub topic, Postgres database or GCS bucket where to publish blockchain data, 
     - For Google PubSub: `--output=projects/<your-project>/topics/crypto_ethereum`. 
     Data will be pushed to `projects/<your-project>/topics/crypto_ethereum.blocks`, `projects/<your-project>/topics/crypto_ethereum.transactions` etc. topics.
-    - For Postgres: `--output=postgresql+pg8000://<user>:<password>@<host>:<port>/<database_name>`, 
-    e.g. `--output=postgresql+pg8000://postgres:admin@127.0.0.1:5432/ethereum`.
+    - For Postgres: `--output=postgresql://<user>:<password>@<host>:<port>/<database_name>`, 
+    e.g. `--output=postgresql://postgres:admin@127.0.0.1:5432/ethereum`.
     - For GCS:  `--output=gs://<bucket_name>`. Make sure to install and initialize `gcloud` cli.
     - For Kafka:  `--output=kafka/<host>:<port>`, e.g. `--output=kafka/127.0.0.1:9092`
     - Those output types can be combined with a comma e.g. `--output=gs://<bucket_name>,projects/<your-project>/topics/crypto_ethereum`
@@ -238,7 +238,7 @@ Stream blockchain data continually to Google Pub/Sub:
 Stream blockchain data to a Postgres database:
 
 ```bash
-ethereumetl stream --start-block 500000 --output postgresql+pg8000://<user>:<password>@<host>:5432/<database>
+ethereumetl stream --start-block 500000 --output postgresql://<user>:<password>@<host>:5432/<database>
 ```
 
 The [schema](https://github.com/blockchain-etl/ethereum-etl-postgres/tree/master/schema) 
