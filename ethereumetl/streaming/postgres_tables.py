@@ -115,7 +115,7 @@ TOKEN_TRANSFERS_V2 = Table(
     Column('from_address', String),
     Column('to_address', String),
     Column('token_type', String),
-    Column('token_id', String),
+    Column('token_id', String, primary_key=True),
     Column('amount', Numeric(78)),
     Column('transaction_hash', String, primary_key=True),
     Column('log_index', BigInteger, primary_key=True),
