@@ -62,6 +62,22 @@ block_number        | bigint      |
 
 ---
 
+## token_transfers_v2.csv
+
+Column              |    Type     |
+--------------------|-------------|
+contract_address    | address     |
+token_id            | hex_string  |
+token_type          | string      |
+from_address        | address     |
+to_address          | address     |
+amount              | numeric     |
+transaction_hash    | hex_string  |
+log_index           | bigint      |
+block_number        | bigint      |
+
+---
+
 ## receipts.csv
 
 Column                       |    Type     |

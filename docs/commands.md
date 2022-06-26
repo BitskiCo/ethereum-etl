@@ -102,6 +102,20 @@ You can tune `--batch-size`, `--max-workers` for performance.
 
 [Token transfers schema](schema.md#token_transferscsv).
 
+#### extract_token_transfers_v2
+
+Similar to extract_token_transfers but incldues erc1155, erc20 and erc721 tranfers in a single data model
+
+Then extract transfers from the logs.csv file:
+
+```bash
+> ethereumetl extract_token_transfers_v2 --logs logs.csv --output token_transfers_v2.csv
+```
+
+You can tune `--batch-size`, `--max-workers` for performance.
+
+[Token transfers schema](schema.md#token_transfers_v2csv).
+
 #### export_contracts
 
 First extract contract addresses from `receipts.csv`
