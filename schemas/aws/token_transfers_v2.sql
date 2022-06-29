@@ -4,7 +4,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS token_transfers_v2 (
     to_address STRING,
     amount STRING,
     token_type STRING,
-    token_ids STRING,
+    token_id STRING,
     transaction_hash STRING,
     log_index BIGINT,
     block_number BIGINT
