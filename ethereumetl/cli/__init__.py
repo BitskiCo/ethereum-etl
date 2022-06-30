@@ -32,6 +32,7 @@ from ethereumetl.cli.export_geth_traces import export_geth_traces
 from ethereumetl.cli.export_origin import export_origin
 from ethereumetl.cli.export_receipts_and_logs import export_receipts_and_logs
 from ethereumetl.cli.export_token_transfers import export_token_transfers
+from ethereumetl.cli.export_token_transfers_v2 import export_token_transfers_v2
 from ethereumetl.cli.export_tokens import export_tokens
 from ethereumetl.cli.export_traces import export_traces
 from ethereumetl.cli.extract_contracts import extract_contracts
@@ -61,6 +62,7 @@ cli.add_command(export_blocks_and_transactions, "export_blocks_and_transactions"
 cli.add_command(export_origin, "export_origin")
 cli.add_command(export_receipts_and_logs, "export_receipts_and_logs")
 cli.add_command(export_token_transfers, "export_token_transfers")
+cli.add_command(export_token_transfers_v2, "export_token_transfers_v2")
 cli.add_command(extract_token_transfers, "extract_token_transfers")
 cli.add_command(extract_token_transfers_v2, "extract_token_transfers_v2")
 cli.add_command(export_contracts, "export_contracts")
