@@ -5,7 +5,7 @@ import pytest
 
 import tests.resources
 from ethereumetl.jobs.exporters.token_transfers_v2_item_exporter import token_transfers_v2_item_exporter
-from ethereumetl.jobs.extract_token_transfers_v2_job import ExtractTokenTransfersJobV2
+from ethereumetl.jobs.extract_token_transfers_v2_job import ExtractTokenTransfersV2Job
 from tests.helpers import compare_lines_ignore_order, read_file
 
 RESOURCE_GROUP = 'test_extract_token_transfers_job_v2'
@@ -23,7 +23,7 @@ def test_export_token_transfers_job(tmpdir, resource_group):
 
     logs_content = read_resource(resource_group, 'logs.csv')
     logs_csv_reader = csv.DictReader(io.StringIO(logs_content))
-    job = ExtractTokenTransfersJobV2(
+    job = ExtractTokenTransfersV2Job(
         logs_iterable=logs_csv_reader,
         batch_size=2,
         item_exporter=token_transfers_v2_item_exporter(output_file),
