@@ -73,7 +73,7 @@ class ExportTokenTransfersJob(BaseJob):
         filter_params = {
             'fromBlock': block_number_batch[0],
             'toBlock': block_number_batch[-1],
-            'topics': TRANSFER_EVENT_TOPIC
+            'topics': [TRANSFER_EVENT_TOPIC]
         }
 
         if self.tokens is not None and len(self.tokens) > 0:
