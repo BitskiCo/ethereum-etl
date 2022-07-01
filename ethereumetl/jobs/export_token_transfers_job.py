@@ -23,10 +23,9 @@
 from ethereumetl.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl.jobs.base_job import BaseJob
 from ethereumetl.mappers.token_transfer_mapper import EthTokenTransferMapper
-from ethereumetl.mappers.token_transfer_v2_mapper import EthTokenTransferV2Mapper
 from ethereumetl.mappers.receipt_log_mapper import EthReceiptLogMapper
 from ethereumetl.service.token_transfer_extractor import EthTokenTransferExtractor
-from ethereumetl.service.token_transfer_v2_extractor import EthTokenTransferV2Extractor, TRANSFER_EVENT_TOPICS
+from ethereumetl.service.token_transfer_extractor import TRANSFER_EVENT_TOPIC
 from ethereumetl.utils import validate_range
 
 
@@ -38,7 +37,6 @@ class ExportTokenTransfersJob(BaseJob):
             batch_size,
             web3,
             token_transfers_exporter,
-            token_transfers_v2_exporter,
             max_workers,
             tokens=None):
         validate_range(start_block, end_block)
@@ -49,21 +47,18 @@ class ExportTokenTransfersJob(BaseJob):
         self.tokens = tokens
 
         self.token_transfers_exporter = token_transfers_exporter
-        self.token_transfers_v2_exporter = token_transfers_v2_exporter
 
         self.batch_work_executor = BatchWorkExecutor(batch_size, max_workers)
 
         self.receipt_log_mapper = EthReceiptLogMapper()
         
         self.token_transfer_mapper = EthTokenTransferMapper()
-        self.token_transfer_v2_mapper = EthTokenTransferV2Mapper()
 
         self.token_transfer_extractor = EthTokenTransferExtractor()
-        self.token_transfer_v2_extractor = EthTokenTransferV2Extractor()
+
 
     def _start(self):
         self.token_transfers_exporter.open()
-        self.token_transfers_v2_exporter.open()
 
     def _export(self):
         self.batch_work_executor.execute(
@@ -78,7 +73,7 @@ class ExportTokenTransfersJob(BaseJob):
         filter_params = {
             'fromBlock': block_number_batch[0],
             'toBlock': block_number_batch[-1],
-            'topics': TRANSFER_EVENT_TOPICS
+            'topics': TRANSFER_EVENT_TOPIC
         }
 
         if self.tokens is not None and len(self.tokens) > 0:
@@ -92,15 +87,9 @@ class ExportTokenTransfersJob(BaseJob):
             token_transfer = self.token_transfer_extractor.extract_transfer_from_log(log)
             if token_transfer is not None:
                 self.token_transfers_exporter.export_item(self.token_transfer_mapper.token_transfer_to_dict(token_transfer))
-            
-            token_transfers_list_v2 = self.token_transfer_v2_extractor.extract_transfer_from_log(log)
-            if token_transfers_list_v2 is not None:
-                for token_transfer_v2 in token_transfers_list_v2:
-                    self.token_transfers_v2_exporter.export_item(self.token_transfer_v2_mapper.token_transfer_to_dict(token_transfer_v2))
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
     def _end(self):
         self.batch_work_executor.shutdown()
         self.token_transfers_exporter.close()
-        self.token_transfers_v2_exporter.close()

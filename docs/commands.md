@@ -63,6 +63,27 @@ You can tune `--batch-size`, `--max-workers` for performance.
 
 [Token transfers schema](schema.md#token_transferscsv).
 
+#### export_token_transfers_v2
+
+Same as anove but supports ERC1155 batch transfers
+
+```bash
+> ethereumetl export_token_transfers_v2 --start-block 0 --end-block 500000 \
+--provider-uri file://$HOME/Library/Ethereum/geth.ipc --batch-size 100 --output token_transfers_v2.csv
+```
+
+Include `--tokens <token1> --tokens <token2>` to filter only certain tokens, e.g.
+
+```bash
+> ethereumetl export_token_transfers_v2 --start-block 0 --end-block 500000 \
+--provider-uri file://$HOME/Library/Ethereum/geth.ipc --output token_transfers_v2.csv \
+--tokens 0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C --tokens 0x80fB784B7eD66730e8b1DBd9820aFD29931aab03
+```
+
+You can tune `--batch-size`, `--max-workers` for performance.
+
+[Token transfers v2 schema](schema.md#token_transfers_v2csv).
+
 #### export_receipts_and_logs
 
 First extract transaction hashes from `transactions.csv`

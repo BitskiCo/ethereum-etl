@@ -20,6 +20,13 @@ Export ERC20 and ERC721 transfers:
 --provider-uri file://$HOME/Library/Ethereum/geth.ipc --output token_transfers.csv
 ```
 
+Export ERC20, ERC721 and ERC1155 transfers:
+
+```bash
+> ethereumetl export_token_transfers_v2 --start-block 0 --end-block 500000 \
+--provider-uri file://$HOME/Library/Ethereum/geth.ipc --output token_transfers_v2.csv
+```
+
 Export traces:
 
 ```bash
