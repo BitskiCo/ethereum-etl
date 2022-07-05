@@ -43,7 +43,6 @@ def read_resource(resource_group, file_name):
 ])
 def test_export_token_transfers_job(tmpdir, start_block, end_block, batch_size, resource_group, web3_provider_type):
     output_file = str(tmpdir.join('token_transfers.csv'))
-    output_file_token_transfer_v2 = str(tmpdir.join('token_transfers_v2.csv'))
 
     job = ExportTokenTransfersJob(
         start_block=start_block, end_block=end_block, batch_size=batch_size,
