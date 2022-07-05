@@ -6,8 +6,8 @@ FIELDS_TO_EXPORT = [
     'from_address',
     'to_address',
     'amount',
-    'token_type'
-    'token_id'
+    'token_type',
+    'token_id',
     'transaction_hash',
     'log_index',
     'block_number',

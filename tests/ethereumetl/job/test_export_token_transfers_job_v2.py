@@ -8,7 +8,7 @@ from ethereumetl.thread_local_proxy import ThreadLocalProxy
 from tests.ethereumetl.job.helpers import get_web3_provider
 from tests.helpers import compare_lines_ignore_order, read_file
 
-RESOURCE_GROUP = 'test_export_token_transfers_job'
+RESOURCE_GROUP = 'test_export_token_transfers_job_v2'
 
 
 def read_resource(resource_group, file_name):
@@ -19,7 +19,6 @@ def read_resource(resource_group, file_name):
     (483920, 483920, 1, 'block_with_transfers', 'mock')
 ])
 def test_export_token_transfers_job_v2(tmpdir, start_block, end_block, batch_size, resource_group, web3_provider_type):
-    output_file = str(tmpdir.join('token_transfers.csv'))
     output_file_token_transfer_v2 = str(tmpdir.join('token_transfers_v2.csv'))
 
     job = ExportTokenTransfersJobV2(
