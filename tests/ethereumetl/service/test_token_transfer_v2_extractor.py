@@ -135,6 +135,50 @@ def test_extract_transfer_from_receipt_log_erc1155_batch_with_token_id_repetitio
         assert token_transfers[iter].transaction_hash == '0x08ea1641fde8e29fbeea762eb28fd9bc4bcfc1ae6e31844c50005b1a8cf91693'
         assert token_transfers[iter].log_index == 0
 
+#https://etherscan.io/tx/0xbe882378b8f91a6fe222e314a67571745b36c4673da4f4d278d92160bc86b927#eventlog
+def test_extract_transfer_from_receipt_log_erc1155_batch_with_single_token_id():
+    log = EthReceiptLog()
+    log.address = '0x236672ed575e1e479b8e101aeeb920f32361f6f9'
+    log.block_number = 15005056
+    log.log_index = 0
+    log.topics = [ERC1155_TRANSFER_BATCH_TOPIC,
+                  '0x0000000000000000000000003db74f87841623144be5cef82d877668b6d51180',
+                  '0x000000000000000000000000474cfe4fa85aa869479d00efd966ad9de8c6e178',
+                  '0x0000000000000000000000000000000000000000000000000000000000000000']
+    log.data = '0x000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001'
+    log.transaction_hash = '0xbe882378b8f91a6fe222e314a67571745b36c4673da4f4d278d92160bc86b927'
+
+    token_transfers = token_transfer_extractor.extract_transfer_from_log(log)
+    assert len(token_transfers) == 1
+    token_ids = ['0x0000000000000000000000000000000000000000000000000000000000000006']
+    amounts = ['0x0000000000000000000000000000000000000000000000000000000000000001']
+    for iter in range(len(token_transfers)):
+        assert token_transfers[iter].token_id == token_ids[iter]
+        assert token_transfers[iter].amount == amounts[iter]
+        assert token_transfers[iter].block_number == 15005056
+        assert token_transfers[iter].from_address == word_to_address('0x000000000000000000000000474cfe4fa85aa869479d00efd966ad9de8c6e178')
+        assert token_transfers[iter].to_address == word_to_address('0x0000000000000000000000000000000000000000000000000000000000000000')
+        assert token_transfers[iter].token_type == "ERC1155"
+        assert token_transfers[iter].contract_address == to_normalized_address('0x236672ed575e1e479b8e101aeeb920f32361f6f9')
+        assert token_transfers[iter].transaction_hash == '0xbe882378b8f91a6fe222e314a67571745b36c4673da4f4d278d92160bc86b927'
+        assert token_transfers[iter].log_index == 0
+
+#https://etherscan.io/tx/0xbe882378b8f91a6fe222e314a67571745b36c4673da4f4d278d92160bc86b927#eventlog
+def test_extract_transfer_from_receipt_log_erc1155_batch_with_empty_token_id():
+    log = EthReceiptLog()
+    log.address = '0x236672ed575e1e479b8e101aeeb920f32361f6f9'
+    log.block_number = 15005056
+    log.log_index = 0
+    log.topics = [ERC1155_TRANSFER_BATCH_TOPIC,
+                  '0x0000000000000000000000003db74f87841623144be5cef82d877668b6d51180',
+                  '0x0000000000000000000000000000000000000000000000000000000000000000',
+                  '0x000000000000000000000000474cfe4fa85aa869479d00efd966ad9de8c6e178']
+    log.data = '0x0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+    log.transaction_hash = '0xbe882378b8f91a6fe222e314a67571745b36c4673da4f4d278d92160bc86b927'
+
+    token_transfers = token_transfer_extractor.extract_transfer_from_log(log)
+    assert len(token_transfers) == 0
+
 
 def word_to_address(param):
     if param is None:
