@@ -69,9 +69,8 @@ class EthTokenTransferV2Extractor(object):
                 token_type="ERC1155")]
         
         elif topics[0] == ERC1155_TRANSFER_BATCH_TOPIC:
-            #todo cleanup
-            if len(topics_with_data) <= 10:
-                logger.warning("The number of topics and data parts is not equal to or greater than 10 in log {} of transaction {}"
+            if len(topics_with_data) < 6:
+                logger.warning("The number of topics and data parts should be at least 6 in log {} of transaction {}"
                                .format(receipt_log.log_index, receipt_log.transaction_hash))
                 return None
 
@@ -80,8 +79,17 @@ class EthTokenTransferV2Extractor(object):
             token_ids = topics_with_data[7: 7 + size]
             amounts = topics_with_data[1 + 7 + size:]
 
-            token_transfers = []
+            # group by token_id and sum amounts to handle duplicate token_ids in same batch transfer
+            # this breaks primary key constraint in database
+            # https://rinkeby.etherscan.io/tx/0x08ea1641fde8e29fbeea762eb28fd9bc4bcfc1ae6e31844c50005b1a8cf91693#eventlog
+            token_id_to_amounts_dec = {}
             for token_id, amount in zip(token_ids, amounts):
+                amount_dec = hex_to_dec(amount)
+                token_id_to_amounts_dec[token_id] = (token_id_to_amounts_dec.get(token_id, 0) + amount_dec)
+
+            token_transfers = []
+            for token_id, amount_dec in token_id_to_amounts_dec.items():
+                amount = "0x{:064x}".format(amount_dec)
                 token_transfers.append(build_token_transfer(
                     receipt_log,
                     from_address=word_to_address(topics_with_data[2]),
