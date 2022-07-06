@@ -69,9 +69,8 @@ class EthTokenTransferV2Extractor(object):
                 token_type="ERC1155")]
         
         elif topics[0] == ERC1155_TRANSFER_BATCH_TOPIC:
-            #todo cleanup
-            if len(topics_with_data) <= 10:
-                logger.warning("The number of topics and data parts is not equal to or greater than 10 in log {} of transaction {}"
+            if len(topics_with_data) < 6:
+                logger.warning("The number of topics and data parts should be at least 6 in log {} of transaction {}"
                                .format(receipt_log.log_index, receipt_log.transaction_hash))
                 return None
 
