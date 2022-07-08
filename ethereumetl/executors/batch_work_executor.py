@@ -40,11 +40,12 @@ BATCH_CHANGE_COOLDOWN_PERIOD_SECONDS = 2 * 60
 
 # Executes the given work in batches, reducing the batch size exponentially in case of errors.
 class BatchWorkExecutor:
-    def __init__(self, starting_batch_size, max_workers, retry_exceptions=RETRY_EXCEPTIONS, max_retries=5):
+    def __init__(self, starting_batch_size, max_workers, retry_exceptions=RETRY_EXCEPTIONS, max_retries=5, sleep_seconds=1):
         self.batch_size = starting_batch_size
         self.max_batch_size = starting_batch_size
         self.latest_batch_size_change_time = None
         self.max_workers = max_workers
+        self.sleep_seconds = sleep_seconds
         # Using bounded executor prevents unlimited queue growth
         # and allows monitoring in-progress futures and failing fast in case of errors.
         self.executor = FailSafeExecutor(BoundedExecutor(1, self.max_workers))
@@ -68,7 +69,7 @@ class BatchWorkExecutor:
             self.logger.info('The batch of size {} will be retried one item at a time.'.format(len(batch)))
             for item in batch:
                 execute_with_retries(work_handler, [item],
-                                     max_retries=self.max_retries, retry_exceptions=self.retry_exceptions)
+                                     max_retries=self.max_retries, retry_exceptions=self.retry_exceptions, sleep_seconds=self.sleep_seconds)
 
         self.progress_logger.track(len(batch))
 
