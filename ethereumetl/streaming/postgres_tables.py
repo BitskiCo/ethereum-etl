@@ -111,7 +111,7 @@ TOKEN_TRANSFERS = Table(
 
 TOKEN_TRANSFERS_V2 = Table(
     'token_transfers_v2', metadata,
-    Column('contract_address', String),
+    Column('contract_address', String, primary_key=True),
     Column('from_address', String),
     Column('to_address', String),
     Column('token_type', String),
