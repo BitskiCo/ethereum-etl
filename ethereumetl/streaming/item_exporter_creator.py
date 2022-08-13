@@ -23,29 +23,30 @@
 from blockchainetl.jobs.exporters.console_item_exporter import ConsoleItemExporter
 from blockchainetl.jobs.exporters.multi_item_exporter import MultiItemExporter
 
-DEFAULT_KAFKA_TOPIC_MAPPING = {
-    'block': 'ethereum_blocks',
-    'transaction': 'ethereum_transactions',
-    'log': 'ethereum_logs',
-    'token_transfer': 'ethereum_token_transfers',
-    # todo(shashank): migrate token_transfers_v2 to new topic
-    'token_transfer_v2': 'token_transfers_v2',
-    'trace': 'ethereum_traces',
-    'contract': 'ethereum_contracts',
-    'token': 'ethereum_tokens',
+CHAIN_ID_TOPIC_PREFIX_MAPPING = {
+    1: 'ethereum',
+    4: 'ethereum_rinkeby',
+    5: 'ethereum_goerli',
+    137: 'polygon',
+    80001: 'polygon_mumbai',
 }
 
-TESTNET_KAFKA_TOPIC_MAPPING = {
-    'block': 'ethereum_rinkeby_blocks',
-    'transaction': 'ethereum_rinkeby_transactions',
-    'log': 'ethereum_rinkeby_logs',
-    'token_transfer': 'ethereum_rinkeby_token_transfers',
-    # todo(shashank): migrate token_transfers_v2 to new topic
-    'token_transfer_v2': 'testnet_token_transfers_v2',
-    'trace': 'ethereum_rinkeby_traces',
-    'contract': 'ethereum_rinkeby_contracts',
-    'token': 'ethereum_rinkeby_tokens',
-}
+def get_kafka_topic_mapping(chain_id):
+    if chain_id not in CHAIN_ID_TOPIC_PREFIX_MAPPING:
+        raise ValueError('Unable to determine topic mapping for chain_id ' + chain_id)
+    topic_prefix = CHAIN_ID_TOPIC_PREFIX_MAPPING[chain_id]
+    return {
+        'block': topic_prefix + '_blocks',
+        'transaction': topic_prefix + '_transactions',
+        'log': topic_prefix + '_logs',
+        'token_transfer': topic_prefix + '_token_transfers',
+        # todo(shashank): migrate mainnet consumers to new topic
+        'token_transfer_v2': topic_prefix + '_token_transfers_v2',
+        'trace': topic_prefix + '_traces',
+        'contract': topic_prefix + '_contracts',
+        'token': topic_prefix + '_tokens',
+    }
+
 
 def create_item_exporters(outputs, testnet=False, chain_id=1):
     split_outputs = [output.strip() for output in outputs.split(',')] if outputs else ['console']
@@ -107,7 +108,7 @@ def create_item_exporter(output, testnet, chain_id):
     elif item_exporter_type == ItemExporterType.KAFKA:
         from blockchainetl.jobs.exporters.kafka_exporter import KafkaItemExporter
         from blockchainetl.jobs.exporters.converters.chain_id_converter import ChainIdConverter
-        item_exporter = KafkaItemExporter(output, item_type_to_topic_mapping=TESTNET_KAFKA_TOPIC_MAPPING, converters=[ChainIdConverter(chain_id)]) if testnet else KafkaItemExporter(output, item_type_to_topic_mapping=DEFAULT_KAFKA_TOPIC_MAPPING,  converters=[ChainIdConverter(chain_id)]); 
+        item_exporter = KafkaItemExporter(output, item_type_to_topic_mapping=get_kafka_topic_mapping(chain_id), converters=[ChainIdConverter(chain_id)]) 
     else:
         raise ValueError('Unable to determine item exporter type for output ' + output)
 
