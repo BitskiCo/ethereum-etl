@@ -84,8 +84,7 @@ def enrich_transactions(transactions, receipts):
             ('contract_address', 'receipt_contract_address'),
             ('root', 'receipt_root'),
             ('status', 'receipt_status'),
-            ('effective_gas_price', 'receipt_effective_gas_price'),
-            ('logs', 'receipt_logs'),
+            ('effective_gas_price', 'receipt_effective_gas_price')
         ]))
 
     if len(result) != len(transactions):
