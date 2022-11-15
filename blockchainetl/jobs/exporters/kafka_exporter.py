@@ -1,6 +1,7 @@
 import collections
 import json
 import logging
+import os
 
 from kafka import KafkaProducer
 
@@ -14,7 +15,26 @@ class KafkaItemExporter:
         self.converter = CompositeItemConverter(converters)
         self.connection_url = self.get_connection_url(output)
         print(self.connection_url)
-        self.producer = KafkaProducer(bootstrap_servers=self.connection_url)
+
+        self.producer = self.determine_and_connect_kafka(self.connection_url)
+
+    @staticmethod
+    def determine_and_connect_kafka(connection_url):
+        kafka_sasl_mechanism = os.environ.get("KAFKA_SASL_MECHANISMS")
+        security_protocol = os.environ.get("KAFKA_SECURITY_PROTOCOL")
+        kafka_username = os.environ.get("KAFKA_USERNAME")
+        kafka_password = os.environ.get("KAFKA_PASSWORD")
+        compression = os.environ.get("COMPRESSION_TYPE")
+
+        if None in [kafka_sasl_mechanism, security_protocol, kafka_username, kafka_password]:
+            return KafkaProducer(bootstrap_servers=connection_url, compression_type=compression)
+        else:
+            return KafkaProducer(bootstrap_servers=connection_url,
+                                 sasl_plain_username=kafka_username,
+                                 sasl_plain_password=kafka_password,
+                                 sasl_mechanism=kafka_sasl_mechanism,
+                                 security_protocol=security_protocol,
+                                 compression_type=compression)
 
     def get_connection_url(self, output):
         try:
